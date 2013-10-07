@@ -1,0 +1,34 @@
+{
+  "name": "node-nailgun",
+  "version": "0.0.0",
+  "description": "Start, stop and connect to Nailgun servers.",
+  "main": "index.js",
+  "scripts": {
+    "test": "./node_modules/mocha/bin/mocha"
+  },
+  "keywords": [
+    "nailgun",
+    "java",
+    "jvm",
+    "jdk",
+    "jvmpin"
+  ],
+  "author": "Eric McCarthy <eric@limulus.net>",
+  "license": "Apache v2",
+  "devDependencies": {
+    "mocha": "~1.12.1"
+  },
+  "directories": {
+    "test": "test"
+  },
+  "dependencies": {
+    "jvmpin": "~1.0.7"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/limulus/node-nailgun"
+  },
+  "bugs": {
+    "url": "https://github.com/limulus/node-nailgun/issues"
+  }
+}
