@@ -16,7 +16,9 @@
   "author": "Eric McCarthy <eric@limulus.net>",
   "license": "Apache v2",
   "devDependencies": {
-    "mocha": "~1.12.1"
+    "mocha": "~1.12.1",
+    "setimmediate": "~1.0.1",
+    "sinon": "~1.7.3"
   },
   "directories": {
     "test": "test"
