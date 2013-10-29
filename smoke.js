@@ -26,5 +26,5 @@ var NailgunServer = require("./src/NailgunServer.js")
 var server = new NailgunServer("127.0.0.1", 1224)
 
 server._start(function (err) {
-	assert.ifError(err)
+    assert.ifError(err)
 })

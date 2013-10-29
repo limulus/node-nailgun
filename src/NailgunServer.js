@@ -28,14 +28,14 @@ var NAILGUN_JAR = path.resolve(__dirname + "/../support/nailgun-0.7.1.jar")
  * @param {number=} port The TCP port the server is available on.
  */
 var NailgunServer = module.exports = function (addr, port) {
-	this._addr = addr || "127.0.0.1"
-	this._port = port || 2113
+    this._addr = addr || "127.0.0.1"
+    this._port = port || 2113
 
-	this._serverProc = null
-	this._startCallback = null
-	this._stdoutLog = ""
+    this._serverProc = null
+    this._startCallback = null
+    this._stdoutLog = ""
 
-	this._setChildProcessSpawnFunction(spawn)
+    this._setChildProcessSpawnFunction(spawn)
 }
 
 /**
@@ -43,7 +43,7 @@ var NailgunServer = module.exports = function (addr, port) {
  * @param {function(string, Array.<string>, Object.<string,*>)=ChildProcess} spawnFunc
  */
 NailgunServer.prototype._setChildProcessSpawnFunction = function (spawnFunc) {
-	this._spawnFunction = spawnFunc
+    this._spawnFunction = spawnFunc
 }
 
 /**
@@ -51,15 +51,15 @@ NailgunServer.prototype._setChildProcessSpawnFunction = function (spawnFunc) {
  * @param {function(Error?)} cb
  */
 NailgunServer.prototype._start = function (cb) {
-	var addrAndPort = this._addr + ":" + this._port
-	var spawnOpts = {
-	    "detached": true
-	  , "stdio": ["ignore", "pipe", "ignore"]
-	}
-	this._serverProc = this._spawnFunction("java", ["-jar", NAILGUN_JAR, addrAndPort], spawnOpts)
-	this._serverProc.stdout.on("data", this._receiveServerStdout.bind(this))
-	this._serverProc.on("close", this._receiveServerClose.bind(this))
-	this._startCallback = cb
+    var addrAndPort = this._addr + ":" + this._port
+    var spawnOpts = {
+        "detached": true
+      , "stdio": ["ignore", "pipe", "ignore"]
+    }
+    this._serverProc = this._spawnFunction("java", ["-jar", NAILGUN_JAR, addrAndPort], spawnOpts)
+    this._serverProc.stdout.on("data", this._receiveServerStdout.bind(this))
+    this._serverProc.on("close", this._receiveServerClose.bind(this))
+    this._startCallback = cb
 }
 
 /**
@@ -69,23 +69,23 @@ NailgunServer.prototype._start = function (cb) {
  * @param {Buffer} data
  */
 NailgunServer.prototype._receiveServerStdout = function (data) {
-	if (data.toString().match(/^NGServer started on .+, port \d+/)) {
-		// Give server some time to actually bind to the port before we
-		// try to fire the callback.
-		setTimeout(function () {
-			var callback = this._startCallback
-			this._startCallback = null
-			if (callback) {
-				callback(null)
-				this._serverProc.stdout.removeAllListeners()
-				this._serverProc.stdout.unref()
-				this._serverProc.unref()
-			}
-		}.bind(this), 200)  
-	}
-	else {
-		this._stdoutLog += data.toString()
-	}
+    if (data.toString().match(/^NGServer started on .+, port \d+/)) {
+        // Give server some time to actually bind to the port before we
+        // try to fire the callback.
+        setTimeout(function () {
+            var callback = this._startCallback
+            this._startCallback = null
+            if (callback) {
+                callback(null)
+                this._serverProc.stdout.removeAllListeners()
+                this._serverProc.stdout.unref()
+                this._serverProc.unref()
+            }
+        }.bind(this), 200)  
+    }
+    else {
+        this._stdoutLog += data.toString()
+    }
 }
 
 /**
@@ -93,12 +93,12 @@ NailgunServer.prototype._receiveServerStdout = function (data) {
  * callback with an error.
  */
 NailgunServer.prototype._receiveServerClose = function () {
-	var callback = this._startCallback
-	if (callback) {
-		var err = new Error("Nailgun failed to start up.")
-		err.nailgunStdout = this._stdoutLog
-		this._startCallback = null
-		callback(err)
-	}
+    var callback = this._startCallback
+    if (callback) {
+        var err = new Error("Nailgun failed to start up.")
+        err.nailgunStdout = this._stdoutLog
+        this._startCallback = null
+        callback(err)
+    }
 }
 
