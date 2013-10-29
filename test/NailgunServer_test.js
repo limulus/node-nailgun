@@ -22,26 +22,45 @@ var NailgunServer = require("../src/NailgunServer.js")
   , sinon = require("sinon")
   , path = require("path")
 
-var server, addr, port, proc, spawner
+var server, addr, port, procMock, spawner
 beforeEach(function () {
 	addr = "127.0.0.1"
 	port = 2113
 	server = new NailgunServer(addr, port)
-	proc = new ServerProcessMock()
-    spawner = sinon.expectation.create("serverSpawner").returns(proc)
-	server.setChildProcessSpawnFunction(spawner)
+	procMock = new ServerProcessMock()
+    spawner = sinon.expectation.create("serverSpawner").returns(procMock)
+	server._setChildProcessSpawnFunction(spawner)
 })
 
-describe("#NailgunServer", function () {
-	describe("-start", function () {
-		it("should successfully spawn a nailgun server", function () {
+describe("NailgunServer", function () {
+	describe(".prototype._start", function () {
+		it("should call the spawn function with args to run the nailgun server", function (done) {
 			var jarpath = path.resolve(__dirname + "/../support/nailgun-0.7.1.jar")
-			server.start()
-			assert.ok(spawner.calledWith(
-				"java"
-			  , ["-jar", jarpath, addr+":"+port]
-			  , {"detached": true}
-			))
+			procMock.emulateServerStart()
+			server._start(function (err) {
+				assert.ifError(err)
+				assert.ok(spawner.calledWith(
+					"java"
+				  , ["-jar", jarpath, addr+":"+port]
+				  , {"detached": true, "stdio": ["ignore", "pipe", "ignore"]}
+				))
+				done()
+			})
+		})
+
+		it("should call the callback when the server is started", function (done) {
+			procMock.emulateServerStart()
+			server._start(function (err) {
+				done()
+			})
+		})
+
+		it("should call the callback with an error when startup has failed", function (done) {
+			procMock.emulateServerFailedStart()
+			server._start(function (err) {
+				assert.ok(err)
+				done()
+			})
 		})
 	})
 })

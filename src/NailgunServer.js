@@ -31,22 +31,74 @@ var NailgunServer = module.exports = function (addr, port) {
 	this._addr = addr || "127.0.0.1"
 	this._port = port || 2113
 
-	this.setChildProcessSpawnFunction(spawn)
+	this._serverProc = null
+	this._startCallback = null
+	this._stdoutLog = ""
+
+	this._setChildProcessSpawnFunction(spawn)
 }
 
 /**
- * Dependency injection for spawning child processes.
+ * Dependency injection point for spawning child processes.
  * @param {function(string, Array.<string>, Object.<string,*>)=ChildProcess} spawnFunc
  */
-NailgunServer.prototype.setChildProcessSpawnFunction = function (spawnFunc) {
+NailgunServer.prototype._setChildProcessSpawnFunction = function (spawnFunc) {
 	this._spawnFunction = spawnFunc
 }
 
 /**
  * Start the server.
+ * @param {function(Error?)} cb
  */
-NailgunServer.prototype.start = function () {
+NailgunServer.prototype._start = function (cb) {
 	var addrAndPort = this._addr + ":" + this._port
-	  , spawnOpts = { "detached": true }
-	this._spawnFunction("java", ["-jar", NAILGUN_JAR, addrAndPort], spawnOpts)
+	var spawnOpts = {
+	    "detached": true
+	  , "stdio": ["ignore", "pipe", "ignore"]
+	}
+	this._serverProc = this._spawnFunction("java", ["-jar", NAILGUN_JAR, addrAndPort], spawnOpts)
+	this._serverProc.stdout.on("data", this._receiveServerStdout.bind(this))
+	this._serverProc.on("close", this._receiveServerClose.bind(this))
+	this._startCallback = cb
 }
+
+/**
+ * Receives everything the nailgun server prints out and keeps track of the 
+ * state of the server.
+ * @param {string} name
+ * @param {Buffer} data
+ */
+NailgunServer.prototype._receiveServerStdout = function (data) {
+	if (data.toString().match(/^NGServer started on .+, port \d+/)) {
+		// Give server some time to actually bind to the port before we
+		// try to fire the callback.
+		setTimeout(function () {
+			var callback = this._startCallback
+			this._startCallback = null
+			if (callback) {
+				callback(null)
+				this._serverProc.stdout.removeAllListeners()
+				this._serverProc.stdout.unref()
+				this._serverProc.unref()
+			}
+		}.bind(this), 200)  
+	}
+	else {
+		this._stdoutLog += data.toString()
+	}
+}
+
+/**
+ * Gets called when the server process ends, so we can call the start
+ * callback with an error.
+ */
+NailgunServer.prototype._receiveServerClose = function () {
+	var callback = this._startCallback
+	if (callback) {
+		var err = new Error("Nailgun failed to start up.")
+		err.nailgunStdout = this._stdoutLog
+		this._startCallback = null
+		callback(err)
+	}
+}
+
