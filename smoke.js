@@ -25,6 +25,8 @@ var NailgunServer = require("./src/NailgunServer.js")
 
 var server = new NailgunServer("127.0.0.1", 1224)
 
-server._start(function (err) {
-    assert.ifError(err)
+server.spawn("ng-cp", [], function (err, proc) {
+	assert.ifError(err)
+	proc.stdout.on("data", function (d) {console.log(d.toString())})
 })
+

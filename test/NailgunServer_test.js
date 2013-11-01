@@ -23,7 +23,7 @@ var NailgunServer = require("../src/NailgunServer.js")
   , path = require("path")
   , EventEmitter = require("events").EventEmitter
 
-var server, addr, port, serverProcMock, spawner
+var server, addr, port, serverProcMock
 beforeEach(function () {
     addr = "127.0.0.1"
     port = 2113
@@ -67,13 +67,19 @@ describe("NailgunServer", function () {
         })
     })
 
+    // Unfortunately not sure how to go about making these tests work, 
+    // so they are disabled.
     xdescribe("prototype.spawn", function () {
         beforeEach(function () {
+            serverProcMock.emulateServerStart()
+
             var remoteProcMock = new EventEmitter()
             remoteProcMock.stdin = new EventEmitter()
             remoteProcMock.stdout = new EventEmitter()
             remoteProcMock.stderr = new EventEmitter()
-            sinon.stub(server, "_spawnProcessFromNailgunConnection").returns(remoteProcMock)
+            sinon.stub(server, "_spawnProcessFromNailgunConnection", function () {
+                return remoteProcMock
+            })
         })
 
         it("should return something like a ChildProcess", function (done) {
@@ -89,7 +95,7 @@ describe("NailgunServer", function () {
         })
 
         it("should start a Nailgun server process if not already running", function (done) {
-            sinon.stub(server, "_start")
+            sinon.stub(server, "_start", server._start)
             server.spawn("ng-cp", [], function (err, proc) {
                 assert.ifError(err)
                 assert.ok(server._start.called)

@@ -38,7 +38,8 @@ var NailgunServer = module.exports = function (addr, port) {
 }
 
 /**
- * Dependency injection point for spawning child processes.
+ * Dependency injection point for spawning child processes. It's
+ * just calling child_process.spawn().
  */
 NailgunServer.prototype._doSpawn = function () {
     return spawn.apply(global, arguments)
@@ -108,18 +109,33 @@ NailgunServer.prototype._receiveServerClose = function () {
  * @param cb {function(Error?, JVMPinProcess?)} Callback to receive spawned process object.
  */
 NailgunServer.prototype.spawn = function (command, args, cb) {
-    var connection = jvmpin.createConnection(this._port, this._addr, function () {
-        var proc = this._spawnProcessFromNailgunConnection(connection, command, args)
-        return cb(null, proc)
-    }.bind(this))
+    var connection = this._createConnectionAndAttemptToSpawn(command, args, cb)
     connection.on("error", function () {
         this._start(function (err) {
             if (err) return cb(err)
 
-            var proc = this._spawnProcessFromNailgunConnection(connection, command, args)
-            return cb(null, proc)
+            connection = this._createConnectionAndAttemptToSpawn(command, args, cb)
+            connection.on("error", cb)
         }.bind(this))
     }.bind(this))
+}
+
+/**
+ * @private
+ * @param command {string} The command to run on the Nailgun server.
+ * @param args {Array.<string>} The argument list for the command.
+ * @param cb {function(Error?, JVMPinProcess?)} Callback to receive spawned process object.
+ */
+NailgunServer.prototype._createConnectionAndAttemptToSpawn = function (command, args, cb) {
+    var connection = jvmpin.createConnection(this._port, this._addr)
+
+    connection.on("connect", function () {
+        connection.removeAllListeners("error")
+        var proc = this._spawnProcessFromNailgunConnection(connection, command, args)
+        return cb(null, proc)
+    }.bind(this))
+
+    return connection
 }
 
 /**
