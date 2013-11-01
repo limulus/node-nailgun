@@ -21,25 +21,25 @@ var NailgunServer = require("../src/NailgunServer.js")
   , assert = require("assert")
   , sinon = require("sinon")
   , path = require("path")
+  , EventEmitter = require("events").EventEmitter
 
-var server, addr, port, procMock, spawner
+var server, addr, port, serverProcMock, spawner
 beforeEach(function () {
     addr = "127.0.0.1"
     port = 2113
     server = new NailgunServer(addr, port)
-    procMock = new ServerProcessMock()
-    spawner = sinon.expectation.create("serverSpawner").returns(procMock)
-    server._setChildProcessSpawnFunction(spawner)
+    serverProcMock = new ServerProcessMock()
+    sinon.stub(server, "_doSpawn").returns(serverProcMock)
 })
 
 describe("NailgunServer", function () {
-    describe(".prototype._start", function () {
+    describe("prototype._start", function () {
         it("should call the spawn function with args to run the nailgun server", function (done) {
             var jarpath = path.resolve(__dirname + "/../support/nailgun-0.7.1.jar")
-            procMock.emulateServerStart()
+            serverProcMock.emulateServerStart()
             server._start(function (err) {
                 assert.ifError(err)
-                assert.ok(spawner.calledWith(
+                assert.ok(server._doSpawn.calledWith(
                     "java"
                   , ["-jar", jarpath, addr+":"+port]
                   , {"detached": true, "stdio": ["ignore", "pipe", "ignore"]}
@@ -49,16 +49,49 @@ describe("NailgunServer", function () {
         })
 
         it("should call the callback when the server is started", function (done) {
-            procMock.emulateServerStart()
+            serverProcMock.emulateServerStart()
             server._start(function (err) {
                 done()
             })
         })
 
         it("should call the callback with an error when startup has failed", function (done) {
-            procMock.emulateServerFailedStart()
+            serverProcMock.emulateServerFailedStart()
             server._start(function (err) {
                 assert.ok(err)
+                done()
+            })
+        })
+    })
+
+    xdescribe("prototype.spawn", function () {
+        beforeEach(function () {
+            serverProcMock.emulateServerStart()
+
+            var remoteProcMock = new EventEmitter()
+            remoteProcMock.stdin = new EventEmitter()
+            remoteProcMock.stdout = new EventEmitter()
+            remoteProcMock.stderr = new EventEmitter()
+            sinon.stub(server, "_spawnProcessFromNailgunConnection").returns(remoteProcMock)
+        })
+
+        it("should return something like a ChildProcess", function (done) {
+            server.spawn("ng-cp", [], function (err, proc) {
+                assert.ifError(err)
+                assert.ok(proc)
+                assert.ok(proc.stdin)
+                assert.ok(proc.stdout)
+                assert.ok(proc.stderr)
+                assert.ok(proc.on)
+                done()
+            })
+        })
+
+        it("should start a Nailgun server process if not already running", function (done) {
+            sinon.stub(server, "_start")
+            server.spawn("ng-cp", [], function (err, proc) {
+                assert.ifError(err)
+                assert.ok(server._start.called)
                 done()
             })
         })
