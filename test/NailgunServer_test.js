@@ -29,7 +29,10 @@ beforeEach(function () {
     port = 2113
     server = new NailgunServer(addr, port)
     serverProcMock = new ServerProcessMock()
-    sinon.stub(server, "_doSpawn").returns(serverProcMock)
+    sinon.stub(server, "_doSpawn", function () {
+        serverProcMock.scheduleEmulation()
+        return serverProcMock
+    })
 })
 
 describe("NailgunServer", function () {
@@ -66,8 +69,6 @@ describe("NailgunServer", function () {
 
     xdescribe("prototype.spawn", function () {
         beforeEach(function () {
-            serverProcMock.emulateServerStart()
-
             var remoteProcMock = new EventEmitter()
             remoteProcMock.stdin = new EventEmitter()
             remoteProcMock.stdout = new EventEmitter()

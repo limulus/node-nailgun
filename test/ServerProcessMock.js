@@ -31,6 +31,7 @@ var ServerProcessMock = module.exports = function () {
     EventEmitter.call(this)
     this.stdout = new EventEmitter()
     this.stdout.unref = function () {}
+    this._emulation = null
 }
 inherits(ServerProcessMock, EventEmitter)
 
@@ -40,25 +41,32 @@ inherits(ServerProcessMock, EventEmitter)
 ServerProcessMock.prototype.unref = function () {}
 
 /**
+ * Runs the emulation soon.
+ */
+ServerProcessMock.prototype.scheduleEmulation = function () {
+    setImmediate(this._emulation)
+}
+
+/**
  * Emulates a successful server startup.
  */
 ServerProcessMock.prototype.emulateServerStart = function () {
-    setImmediate(function () {
+    this._emulation = function () {
         var buf = new Buffer("NGServer started on 127.0.0.1, port 2113\n")
         this.stdout.emit("data", buf)
-    }.bind(this))
+    }.bind(this)
 }
 
 /**
  * Emulates an error launching the process.
  */
 ServerProcessMock.prototype.emulateSpawnError = function () {
-    setImmediate(function () {
+    this._emulation = function () {
         var err = new Error("spawn ENOENT")
         err.code = err.errno = "ENOENT"
         err.syscall = "spawn"
         this.emit("error", err)
-    }.bind(this))
+    }.bind(this)
 }
 
 /**
@@ -73,16 +81,18 @@ ServerProcessMock.prototype.emulateServerFailedStart = function () {
       , {"stdout":"\n"}
     ]
 
-    chunks.forEach(function (chunk) {
-        setImmediate(function () {
-            this.stdout.emit("data", new Buffer(chunk["stdout"]))
+    this._emulation = function () {
+        chunks.forEach(function (chunk) {
+            setImmediate(function () {
+                this.stdout.emit("data", new Buffer(chunk["stdout"]))
+            }.bind(this))
         }.bind(this))
-    }.bind(this))
 
-    setImmediate(function () {
-        this.stdout.emit("end")
-        this.stdout.emit("finish")
-        this.stdout.emit("close", false)
-        this.emit("close", 0)
-    }.bind(this))
+        setImmediate(function () {
+            this.stdout.emit("end")
+            this.stdout.emit("finish")
+            this.stdout.emit("close", false)
+            this.emit("close", 0)
+        }.bind(this))
+    }.bind(this)
 }
