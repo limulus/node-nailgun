@@ -67,9 +67,11 @@ describe("NailgunServer", function () {
         })
     })
 
-    // Unfortunately not sure how to go about making these tests work, 
-    // so they are disabled.
-    xdescribe("prototype.spawn", function () {
+    // Unfortunately not sure how to go about making these tests work with
+    // the mock server process, so they are disabled. The smoke test now
+    // attempts to cover these.
+    /*
+    describe("prototype.spawn", function () {
         beforeEach(function () {
             serverProcMock.emulateServerStart()
 
@@ -103,5 +105,6 @@ describe("NailgunServer", function () {
             })
         })
     })
+    */
 })
 
