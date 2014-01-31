@@ -16,8 +16,6 @@
 
 "use strict"
 
-require("setimmediate")  // setImmediate shim for Node 0.8
-
 var EventEmitter = require("events").EventEmitter
   , inherits = require("util").inherits
 
