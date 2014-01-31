@@ -67,9 +67,9 @@ describe("NailgunServer", function () {
         })
     })
 
-    // Unfortunately not sure how to go about making these tests work with
-    // the mock server process, so they are disabled. The smoke test now
-    // attempts to cover these.
+    // Unfortunately not sure how to go about making the spawn() method
+    // unit tests work with the mock server process, so they are disabled.
+    // The smoke test now attempts to cover these cases.
     /*
     describe("prototype.spawn", function () {
         beforeEach(function () {
