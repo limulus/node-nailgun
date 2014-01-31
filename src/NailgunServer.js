@@ -115,9 +115,11 @@ NailgunServer.prototype._receiveServerClose = function () {
  * @public
  * @param command {string} The command to run on the Nailgun server.
  * @param args {Array.<string>} The argument list for the command.
- * @param cb {function(Error?, JVMPinProcess?)} Callback to receive spawned process object.
+ * @param cb {function(Error?, JVMPinProcess?)=} Callback to receive spawned process object.
  */
 NailgunServer.prototype.spawn = function (command, args, cb) {
+    cb = cb || function () {}  // Make the callback optional.
+
     var connection = this._createConnectionAndAttemptToSpawn(command, args, cb)
     connection.on("error", function () {
         this._start(function (err) {
@@ -133,11 +135,12 @@ NailgunServer.prototype.spawn = function (command, args, cb) {
  * @private
  * @param command {string} The command to run on the Nailgun server.
  * @param args {Array.<string>} The argument list for the command.
- * @param cb {function(Error?, JVMPinProcess?)} Callback to receive spawned process object.
+ * @param cb {function(Error?, JVMPinProcess?)=} Callback to receive spawned process object.
  */
 NailgunServer.prototype._createConnectionAndAttemptToSpawn = function (command, args, cb) {
-    var connection = jvmpin.createConnection(this._port, this._addr)
+    cb = cb || function () {}  // Make callback optional.
 
+    var connection = jvmpin.createConnection(this._port, this._addr)
     connection.on("connect", function () {
         connection.removeAllListeners("error")
         var proc = this._spawnProcessFromNailgunConnection(connection, command, args)
@@ -202,3 +205,19 @@ NailgunServer.prototype.addClassPath = function (path, cb) {
         }.bind(this))
     }.bind(this))
 }
+
+/**
+ * Stop the Nailgun server.
+ * @param {function(Error?)=} cb
+ */
+NailgunServer.prototype.stop = function (cb) {
+    cb = cb || function () {}  // Make callback optional.
+
+    // Listen to the close and error events instead of the
+    // process exit event because the server goes down immediately
+    // and doesn't inform the client that the "ng-stop" command completed.
+    this._createConnectionAndAttemptToSpawn("ng-stop", [])
+        .on("close", function () { cb(null) })
+        .on("error", function (err) { cb(err) })
+}
+

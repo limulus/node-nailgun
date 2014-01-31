@@ -99,11 +99,16 @@ describe("Smoke Test", function () {
         })
     })
 
-    after(function (done) {
-        // Kill the Nailgun server process we started.
-        var connection = jvmpin.createConnection(port, addr, function () {
-            connection.spawn("ng-stop")
-            connection.on("close", function () { done() })
+    it("should be able to stop the server.", function (done) {
+        var server = new NailgunServer(addr, port)
+        server.stop(function (err) {
+            assert.ifError(err)
+            
+            var connection = jvmpin.createConnection(port, addr)
+            connection.on("error", function () { done() })
+            connection.on("connect", function () {
+                assert.fail("Connected to stopped Nailgun server!?")
+            })
         })
     })
 })
