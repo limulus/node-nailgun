@@ -20,7 +20,7 @@
 
 "use strict"
 
-var NailgunServer = require("../src/NailgunServer.js")
+var nailgun = require("../index.js")
   , assert = require("assert")
   , jvmpin = require("jvmpin")
 
@@ -54,7 +54,7 @@ describe("Smoke Test", function () {
     })
 
     it("should successfully start the server", function (done) {
-        var server = new NailgunServer(addr, port)
+        var server = nailgun.createServer(addr, port)
 
         // This should cause a new Nailgun server to start, assuming
         // killing any servers already running on the same port worked
@@ -85,13 +85,13 @@ describe("Smoke Test", function () {
     })
 
     it("should be able to set and get classpaths", function (done) {
-        var server = new NailgunServer(addr, port)
+        var server = nailgun.createServer(addr, port)
         server.addClassPath("/foo/bar", function (err) {
             assert.ifError(err)
             server.getClassPaths(function (err, paths) {
                 assert.ifError(err)
                 assert.deepEqual(paths, [
-                    NailgunServer._pathToNailgunJar(),
+                    nailgun.NailgunServer._pathToNailgunJar(),
                     "/foo/bar"
                 ])
                 done()
@@ -100,7 +100,7 @@ describe("Smoke Test", function () {
     })
 
     it("should be able to stop the server.", function (done) {
-        var server = new NailgunServer(addr, port)
+        var server = nailgun.createServer(addr, port)
         server.stop(function (err) {
             assert.ifError(err)
 

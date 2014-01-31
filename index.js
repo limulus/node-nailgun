@@ -1,5 +1,5 @@
 /**
- * @license Copyright 2013 DesertNet, LLC
+ * @license Copyright 2014 DesertNet, LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,4 +15,15 @@
  */
 
 "use strict"
+
+var NailgunServer = module.exports.NailgunServer = require("./src/NailgunServer.js")
+
+/**
+ * @param {string=} addr
+ * @param {number=} port
+ * @return {NailgunServer}
+ */
+module.exports.createServer = function (addr, port) {
+    return new NailgunServer(addr, port)
+}
 
