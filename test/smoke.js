@@ -103,11 +103,11 @@ describe("Smoke Test", function () {
         var server = new NailgunServer(addr, port)
         server.stop(function (err) {
             assert.ifError(err)
-            
+
             var connection = jvmpin.createConnection(port, addr)
             connection.on("error", function () { done() })
             connection.on("connect", function () {
-                assert.fail("Connected to stopped Nailgun server!?")
+                assert.fail("Connected to stopped Nailgun server‽")
             })
         })
     })
