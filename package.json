@@ -28,9 +28,9 @@
   },
   "repository": {
     "type": "git",
-    "url": "git://github.com/limulus/node-nailgun"
+    "url": "git://github.com/DesertNet/node-nailgun"
   },
   "bugs": {
-    "url": "https://github.com/limulus/node-nailgun/issues"
+    "url": "https://github.com/DesertNet/node-nailgun/issues"
   }
 }
