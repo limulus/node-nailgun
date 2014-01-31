@@ -31,16 +31,27 @@ var NailgunChildProcessMock = module.exports = function () {
 }
 inherits(NailgunChildProcessMock, EventEmitter)
 
-NailgunChildProcessMock.prototype.emulateNgCp = function () {
-    var classpath = "file:" + NailgunServer._pathToNailgunJar()
+/**
+ * Emulates Nailgun's built-in "ng-cp" command, which returns
+ * the classpath.
+ * @param {Array.<string>=} extraPaths
+ */
+NailgunChildProcessMock.prototype.emulateNgCp = function (extraPaths) {
+    var defaultClassPath = NailgunServer._pathToNailgunJar()
+    var paths = [defaultClassPath].concat(extraPaths || [])
+
     setImmediate(function () {
-        this.stdout.emit("data", classpath + "\n")
+        paths.forEach(function (path) {
+            this.stdout.emit("data", "file:" + path + "\n")
+        }.bind(this))
         setImmediate(function () {
             // Not sure why, but jvmpin tends to emit "close" twice
-            // on the stdio streams. It also never emits "end".
+            // on the stdio streams and "exit" twice on the process.
+            // It also never emits "end" on the streams.
             this.stdout.emit("close", false)
             this.stdout.emit("close", false)
-            this.emit("close", 0)
+            this.emit("exit", 0)
+            this.emit("exit", 0)
         }.bind(this))
     }.bind(this))
 }

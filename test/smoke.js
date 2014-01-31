@@ -84,6 +84,21 @@ describe("Smoke Test", function () {
         })
     })
 
+    it("should be able to set and get classpaths", function (done) {
+        var server = new NailgunServer(addr, port)
+        server.addClassPath("/foo/bar", function (err) {
+            assert.ifError(err)
+            server.getClassPaths(function (err, paths) {
+                assert.ifError(err)
+                assert.deepEqual(paths, [
+                    NailgunServer._pathToNailgunJar(),
+                    "/foo/bar"
+                ])
+                done()
+            })
+        })
+    })
+
     after(function (done) {
         // Kill the Nailgun server process we started.
         var connection = jvmpin.createConnection(port, addr, function () {

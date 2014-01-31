@@ -155,7 +155,7 @@ NailgunServer.prototype._createConnectionAndAttemptToSpawn = function (command, 
  * @return {JVMPinProcess} The spawned JVMPinProcess
  */
 NailgunServer.prototype._spawnProcessFromNailgunConnection = function (connection, command, args) {
-    var proc = connection.spawn(command)
+    var proc = connection.spawn(command, args)
     return proc
 }
 
@@ -173,7 +173,7 @@ NailgunServer.prototype.getClassPaths = function (cb) {
         proc.stdout.setEncoding("utf8")
         proc.stdout.on("data", function (chunk) { lines += chunk })
         proc.stdout.on("close", function () {
-            if (closeCalled) return true
+            if (closeCalled) return;
             closeCalled = true
 
             var paths = lines.split(/(?:\r?\n)+/)
@@ -181,6 +181,24 @@ NailgunServer.prototype.getClassPaths = function (cb) {
                 .filter(function (line) { return line !== "" })
 
             return cb(null, paths)
+        }.bind(this))
+    }.bind(this))
+}
+
+/**
+ * Adds a new classpath to the Nailgun server process.
+ * @param {string} path
+ * @param {function(Error?)} cb
+ */
+NailgunServer.prototype.addClassPath = function (path, cb) {
+    this.spawn("ng-cp", [path], function (err, proc) {
+        if (err) return cb(err)
+
+        var exitCalled = false
+        proc.on("exit", function () {
+            if (exitCalled) return;
+            exitCalled = true
+            return cb(null)
         }.bind(this))
     }.bind(this))
 }
