@@ -36,8 +36,9 @@ NailgunChildProcessMock.prototype.emulateNgCp = function () {
     setImmediate(function () {
         this.stdout.emit("data", classpath + "\n")
         setImmediate(function () {
-            this.stdout.emit("end")
-            this.stdout.emit("finish")
+            // Not sure why, but jvmpin tends to emit "close" twice
+            // on the stdio streams. It also never emits "end".
+            this.stdout.emit("close", false)
             this.stdout.emit("close", false)
             this.emit("close", 0)
         }.bind(this))

@@ -19,7 +19,6 @@
 var spawn = require("child_process").spawn
   , path = require("path")
   , jvmpin = require("jvmpin")
-  , slurp = require("slurp-stream")
 
 var NAILGUN_JAR = path.resolve(__dirname + "/../support/nailgun-0.7.1.jar")
 
@@ -169,15 +168,19 @@ NailgunServer.prototype.getClassPaths = function (cb) {
     this.spawn("ng-cp", [], function (err, proc) {
         if (err) return cb(err)
 
+        var lines = ""
+          , closeCalled = false
         proc.stdout.setEncoding("utf8")
-        slurp(proc.stdout, function (err, lines) {
-            if (err) return cb(err)
+        proc.stdout.on("data", function (chunk) { lines += chunk })
+        proc.stdout.on("close", function () {
+            if (closeCalled) return true
+            closeCalled = true
 
             var paths = lines.split(/(?:\r?\n)+/)
                 .map(function (line) { return line.replace(/^file:/, "") })
                 .filter(function (line) { return line !== "" })
 
             return cb(null, paths)
-        })
-    })
+        }.bind(this))
+    }.bind(this))
 }
