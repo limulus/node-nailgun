@@ -18,6 +18,7 @@
 
 var NailgunServer = require("../src/NailgunServer.js")
   , ServerProcessMock = require("./ServerProcessMock.js")
+  , NailgunChildProcessMock = require("./NailgunChildProcessMock.js")
   , assert = require("assert")
   , sinon = require("sinon")
   , path = require("path")
@@ -63,6 +64,37 @@ describe("NailgunServer", function () {
             server._start(function (err) {
                 assert.ok(err)
                 done()
+            })
+        })
+    })
+
+    describe("prototype.getClassPaths", function () {
+        it("should fetch the class paths from the server and present them as an array", function (done) {
+            var ngChildProcMock = new NailgunChildProcessMock()
+            sinon.stub(server, "spawn").callsArgWith(2, null, ngChildProcMock)
+
+            server.getClassPaths(function (err, paths) {
+                assert.ifError(err)
+                assert.deepEqual(paths, [NailgunServer._pathToNailgunJar()])
+                done()
+            })
+
+            ngChildProcMock.emulateNgCp()
+        })
+    })
+
+    xdescribe("prototype.addClassPath", function () {
+        it("should add the passed string to the server's classpath", function (done) {
+            serverProcMock.emulateServerStart()
+            server.addClassPath("/addClassPath/test", function (err) {
+                assert.ifError(err)
+                server.getClassPaths(function (err, paths) {
+                    assert.ifError(err)
+                    assert.ok(paths.find(function (path) {
+                        return path === "/addClassPath/test"
+                    }))
+                    done()
+                })
             })
         })
     })

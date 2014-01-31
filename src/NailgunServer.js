@@ -19,6 +19,7 @@
 var spawn = require("child_process").spawn
   , path = require("path")
   , jvmpin = require("jvmpin")
+  , slurp = require("slurp-stream")
 
 var NAILGUN_JAR = path.resolve(__dirname + "/../support/nailgun-0.7.1.jar")
 
@@ -35,6 +36,15 @@ var NailgunServer = module.exports = function (addr, port) {
     this._serverProc = null
     this._startCallback = null
     this._stdoutLog = ""
+}
+
+/**
+ * Unit tests need to know the path to the jarfile in order to
+ * accurately test the class path.
+ * @return {string}
+ */
+NailgunServer._pathToNailgunJar = function () {
+    return NAILGUN_JAR
 }
 
 /**
@@ -150,3 +160,24 @@ NailgunServer.prototype._spawnProcessFromNailgunConnection = function (connectio
     return proc
 }
 
+/**
+ * Fetches the current classpath for the server and returns it in
+ * an array sans the "file:" prefix.
+ * @param {function(Error?, Array.<string>)} cb
+ */
+NailgunServer.prototype.getClassPaths = function (cb) {
+    this.spawn("ng-cp", [], function (err, proc) {
+        if (err) return cb(err)
+
+        proc.stdout.setEncoding("utf8")
+        slurp(proc.stdout, function (err, lines) {
+            if (err) return cb(err)
+
+            var paths = lines.split(/(?:\r?\n)+/)
+                .map(function (line) { return line.replace(/^file:/, "") })
+                .filter(function (line) { return line !== "" })
+
+            return cb(null, paths)
+        })
+    })
+}

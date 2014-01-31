@@ -25,7 +25,8 @@
     "test": "test"
   },
   "dependencies": {
-    "jvmpin": "~1.0.7"
+    "jvmpin": "~1.0.7",
+    "slurp-stream": "~0.0.0"
   },
   "repository": {
     "type": "git",

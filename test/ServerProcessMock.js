@@ -23,7 +23,7 @@ var EventEmitter = require("events").EventEmitter
 
 
 /**
- * Emulates a compiler child process.
+ * Emulates a server child process.
  * @constructor
  * @inherits {EventEmitter}
  */
@@ -36,7 +36,7 @@ var ServerProcessMock = module.exports = function () {
 inherits(ServerProcessMock, EventEmitter)
 
 /**
- * Stub so we can be "unreferened".
+ * Stub so we can be "unreferenced".
  */
 ServerProcessMock.prototype.unref = function () {}
 
