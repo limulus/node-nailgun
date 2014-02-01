@@ -7,7 +7,7 @@ A Node.js module for starting, stopping and connecting to [Nailgun](http://marti
 Synopsis
 --------
 
-Running Java command line utilities tends to be kinda slow. You run `java -jar …` and your JVM spends time spinning up. If the process is computationally expensive, the JVM spends lots of time compiling and optimizing bytecode. And then your process finishes and exits, leaving the next invocation of the command to do the same things all over again.
+Running Java command line utilities tends to be kinda slow. You run `java -jar foo.jar` and your JVM spends time spinning up. If the process is computationally expensive, the JVM spends lots of time compiling and optimizing bytecode. And then your process finishes and exits, leaving the next invocation of the command to do the same things all over again.
 
 A better way is to run your command in a Nailgun server. The server stays running even when your command has finished. You still pay the JVM tax on first run, but subsequent runs should be considerably faster.
 
@@ -18,6 +18,16 @@ Caveats
 Please note that Nailgun is meant to run in a trusted environment. It runs as the system user that started it and its protocol makes no attempt to authenticate connections. Only run it on single-user workstations and on a local loopback address (like `127.0.0.1`).
 
 Also note that some Java command line utilities may keep static variables in memory and make the assumption that these variables will be cleared between runs. This won’t happen in a Nailgun server, so be wary when trying out new utilities.
+
+
+Installation
+------------
+
+```shell
+npm install node-nailgun
+```
+
+There’s no need to independently install Nailgun…it’s included in the module!
 
 
 Example
@@ -35,15 +45,6 @@ server.addClassPath(__dirname, function (error) {
     })
 })
 ```
-
-
-Installation
-------------
-
-```shell
-npm install node-nailgun
-```
-
 
 Functions
 ---------
