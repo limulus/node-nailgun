@@ -68,44 +68,8 @@ describe("NailgunServer", function () {
         })
     })
 
-    // Unfortunately not sure how to go about making the spawn() method
-    // unit tests work with the mock server process, so they are disabled.
-    // The smoke test now attempts to cover these cases.
-    /*
-    describe("prototype.spawn", function () {
-        beforeEach(function () {
-            serverProcMock.emulateServerStart()
-
-            var remoteProcMock = new EventEmitter()
-            remoteProcMock.stdin = new EventEmitter()
-            remoteProcMock.stdout = new EventEmitter()
-            remoteProcMock.stderr = new EventEmitter()
-            sinon.stub(server, "_spawnProcessFromNailgunConnection", function () {
-                return remoteProcMock
-            })
-        })
-
-        it("should return something like a ChildProcess", function (done) {
-            server.spawn("ng-cp", [], function (err, proc) {
-                assert.ifError(err)
-                assert.ok(proc)
-                assert.ok(proc.stdin)
-                assert.ok(proc.stdout)
-                assert.ok(proc.stderr)
-                assert.ok(proc.on)
-                done()
-            })
-        })
-
-        it("should start a Nailgun server process if not already running", function (done) {
-            sinon.stub(server, "_start", server._start)
-            server.spawn("ng-cp", [], function (err, proc) {
-                assert.ifError(err)
-                assert.ok(server._start.called)
-                done()
-            })
-        })
-    })
-    */
+    // Looking for prototype.spawn, prototype.getClassPaths,
+    // prototype.addClassPath and prototype.stop test cases?
+    // Check out test/smoke.js.
 })
 
