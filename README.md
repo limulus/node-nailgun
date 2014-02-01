@@ -61,7 +61,7 @@ This does not actually start the server. This happens on demand, and only if the
 Runs the specified command with the given array of arguments. The callback is called once the command has started with the following arguments:
 
   * An error object if the command could not be started.
-  * An object similar to `ChildProcess`, but is actually a `jvmpin`. See [jvmpin](https://npmjs.org/package/jvmpin) for more.
+  * An object similar to `ChildProcess`, but is actually a `JVMPin` object. See [JVMPin](https://npmjs.org/package/jvmpin) for more.
 
 
 ### server.addClassPath(path, callback)
