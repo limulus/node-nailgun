@@ -63,6 +63,11 @@ Runs the specified command (class with a `main()` method) with the given array o
   * An object similar to `ChildProcess`, but is actually a `JVMPin` object. See [JVMPin](https://npmjs.org/package/jvmpin) for more.
 
 
+### NailgunServer.prototype.spawnJar(pathToJarFile, args, callback)
+
+Same as `spawn()`, but automatically executes the main class in the specified jar file.
+
+
 ### NailgunServer.prototype.addClassPath(path, callback)
 
 Adds the `path` to the server’s classpath. The callback is called once complete, or if there was an error it will be passed the error object.
