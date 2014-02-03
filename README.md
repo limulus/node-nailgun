@@ -36,13 +36,12 @@ Example
 Runs a simple command called `Hello`, that prints out “Hello” followed by the name given as the first command line argument. (See this module’s example directory.)
 
 ```javascript
-var nailgun = require("node-nailgun")
+var nailgun = require("../index.js")
 
 var server = nailgun.createServer()
-server.addClassPath(__dirname, function (error) {
-    server.spawn("Hello", ["Casey"], function (error, helloProcess) {
-        helloProcess.stdout.pipe(process.stdout)
-    })
+server.spawnJar("/path/to/hello.jar", ["Casey"], function (error, helloProcess) {
+    if (error) return console.error("Failed to run Hello!", error)
+    helloProcess.stdout.pipe(process.stdout)
 })
 ```
 

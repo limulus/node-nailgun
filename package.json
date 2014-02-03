@@ -27,7 +27,7 @@
   },
   "dependencies": {
     "jvmpin": "1.0.7",
-    "jarfile": "0.0.1"
+    "jarfile": "^0.0.2"
   },
   "repository": {
     "type": "git",

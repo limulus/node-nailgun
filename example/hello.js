@@ -17,11 +17,12 @@
 "use strict"
 
 var nailgun = require("../index.js")
+  , path = require("path")
+
+var helloJar = path.resolve(__dirname + "/../support/hello.jar")
 
 var server = nailgun.createServer()
-server.addClassPath(__dirname, function (error) {
-    server.spawn("Hello", ["Casey"], function (error, helloProcess) {
-        if (error) return console.error("Failed to run Hello!", error)
-        helloProcess.stdout.pipe(process.stdout)
-    })
+server.spawnJar(helloJar, ["Casey"], function (error, helloProcess) {
+    if (error) return console.error("Failed to run Hello!", error)
+    helloProcess.stdout.pipe(process.stdout)
 })
