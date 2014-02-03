@@ -51,25 +51,25 @@ Functions
 
 ### nailgun.createServer(address, port)
 
-Instantiate a server instance. If `address` and `port` are omitted, the defaults of `"127.0.0.1"` and `2335` are used.
+Instantiates a `NailgunServer` instance. If `address` and `port` are omitted, the defaults of `"127.0.0.1"` and `2335` are used.
 
 This does not actually start the server. This happens on demand, and only if the server is not already running.
 
 
-### server.spawn(command, args, callback)
+### NailgunServer.prototype.spawn(command, args, callback)
 
-Runs the specified command with the given array of arguments. The callback is called once the command has started with the following arguments:
+Runs the specified command (class with a `main()` method) with the given array of arguments. The callback is called once the command has started with the following arguments:
 
   * An error object if the command could not be started.
   * An object similar to `ChildProcess`, but is actually a `JVMPin` object. See [JVMPin](https://npmjs.org/package/jvmpin) for more.
 
 
-### server.addClassPath(path, callback)
+### NailgunServer.prototype.addClassPath(path, callback)
 
 Adds the `path` to the server’s classpath. The callback is called once complete, or if there was an error it will be passed the error object.
 
 
-### server.getClassPaths(callback)
+### NailgunServer.prototype.getClassPaths(callback)
 
 Fetches an array of paths in the server’s classpath. The callback is called with the following arguments:
 
@@ -77,7 +77,7 @@ Fetches an array of paths in the server’s classpath. The callback is called wi
   * An array of path strings.
 
 
-### server.stop(callback)
+### NailgunServer.prototype.stop(callback)
 
 Stops the server. The callback is called when server shutdown is probably complete, or if there was an error it will be passed the error object.
 
