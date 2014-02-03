@@ -2,7 +2,9 @@
   "name": "node-nailgun",
   "version": "0.0.1",
   "description": "Start, stop and connect to Nailgun servers.",
-  "engines": {"node": ">=0.10"},
+  "engines": {
+    "node": ">=0.10"
+  },
   "main": "index.js",
   "scripts": {
     "test": "./node_modules/mocha/bin/mocha"
@@ -24,7 +26,8 @@
     "test": "test"
   },
   "dependencies": {
-    "jvmpin": "1.0.7"
+    "jvmpin": "1.0.7",
+    "jarfile": "0.0.1"
   },
   "repository": {
     "type": "git",

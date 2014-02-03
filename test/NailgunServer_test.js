@@ -68,6 +68,31 @@ describe("NailgunServer", function () {
         })
     })
 
+    describe("prototype.spawnJar", function () {
+        var helloJar = path.resolve(__dirname + "/../support/hello.jar")
+
+        beforeEach(function () {
+            sinon.stub(server, "addClassPath").yieldsAsync(null)
+            sinon.stub(server, "spawn").yieldsAsync(null, {})
+        })
+
+        it("should automatically add the jar file to the classpath", function (done) {
+            server.spawnJar(helloJar, [], function (err) {
+                assert.ifError(err)
+                assert(server.addClassPath.calledWith(helloJar))
+                done()
+            })
+        })
+
+        it("should spawn the jarfile with the given arguments", function (done) {
+            server.spawnJar(helloJar, ["Alice"], function (err) {
+                assert.ifError(err)
+                assert(server.spawn.calledWith("net.desert.hello.Hello", ["Alice"]))
+                done()
+            })
+        })
+    })
+
     // Looking for prototype.spawn, prototype.getClassPaths,
     // prototype.addClassPath and prototype.stop test cases?
     // Check out test/smoke.js.

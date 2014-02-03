@@ -19,6 +19,7 @@
 var spawn = require("child_process").spawn
   , path = require("path")
   , jvmpin = require("jvmpin")
+  , jarfile = require("jarfile")
 
 var NAILGUN_JAR = path.resolve(__dirname + "/../support/nailgun-0.7.1.jar")
 
@@ -202,6 +203,27 @@ NailgunServer.prototype.addClassPath = function (path, cb) {
             if (exitCalled) return;
             exitCalled = true
             return cb(null)
+        }.bind(this))
+    }.bind(this))
+}
+
+/**
+ * Runs a jarfile.
+ * @param {string} pathToJar
+ * @param {Array.<string>} args
+ * @param {function(Error?, JVMPinProcess)}
+ */
+NailgunServer.prototype.spawnJar = function (pathToJar, args, cb) {
+    jarfile.fetchJarAtPath(pathToJar, function (err, jar) {
+        if (err) return cb(err)
+
+        var mainClass = jar.valueForManifestEntry("Main-Class")
+        if (!mainClass) return cb(new Error("No Main-Class entry in manifest file for " + jarPath + ". If you can't add one, try adding the jar to the server's classpath and using spawn() directly."))
+
+        this.addClassPath(pathToJar, function (err) {
+            if (err) return cb(err)
+                
+            this.spawn(mainClass, args, cb)
         }.bind(this))
     }.bind(this))
 }
