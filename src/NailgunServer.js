@@ -173,13 +173,9 @@ NailgunServer.prototype.getClassPaths = function (cb) {
         if (err) return cb(err)
 
         var lines = ""
-          , closeCalled = false
         proc.stdout.setEncoding("utf8")
         proc.stdout.on("data", function (chunk) { lines += chunk })
         proc.stdout.on("close", function () {
-            if (closeCalled) return;
-            closeCalled = true
-
             var paths = lines.split(/(?:\r?\n)+/)
                 .map(function (line) { return line.replace(/^file:/, "") })
                 .filter(function (line) { return line !== "" })
@@ -198,10 +194,7 @@ NailgunServer.prototype.addClassPath = function (path, cb) {
     this.spawn("ng-cp", [path], function (err, proc) {
         if (err) return cb(err)
 
-        var exitCalled = false
         proc.on("exit", function () {
-            if (exitCalled) return;
-            exitCalled = true
             return cb(null)
         }.bind(this))
     }.bind(this))

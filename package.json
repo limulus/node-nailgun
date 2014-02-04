@@ -1,6 +1,6 @@
 {
   "name": "node-nailgun",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "Start, stop and connect to Nailgun servers.",
   "engines": {
     "node": ">=0.10"
@@ -26,7 +26,7 @@
     "test": "test"
   },
   "dependencies": {
-    "jvmpin": "1.0.7",
+    "jvmpin": "^1.0",
     "jarfile": "^0.0.2"
   },
   "repository": {

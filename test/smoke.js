@@ -69,13 +69,7 @@ describe("Smoke Test", function () {
                 dataReceived = true
             })
 
-            var procExited = false
             proc.on("exit", function (exitCode) {
-                // It's not yet clear why we get two exit events, but let's 
-                // make sure we don't wind up calling done() twice
-                if (procExited) return
-                procExited = true
-
                 // Make sure everything went as expected, then we're done!
                 assert.equal(exitCode, 0)
                 assert.ok(dataReceived)
