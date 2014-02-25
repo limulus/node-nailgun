@@ -1,6 +1,6 @@
 {
   "name": "node-nailgun",
-  "version": "0.0.3",
+  "version": "1.0.0",
   "description": "Start, stop and connect to Nailgun servers.",
   "engines": {
     "node": ">=0.10"
