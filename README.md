@@ -1,4 +1,4 @@
-node-nailgun   [![Build Status](https://travis-ci.org/DesertNet/node-nailgun.png?branch=master)](https://travis-ci.org/DesertNet/node-nailgun)
+node-nailgun   [![Build Status](https://travis-ci.org/desertnet/node-nailgun.png?branch=master)](https://travis-ci.org/desertnet/node-nailgun)
 ============
 
 A Node.js module for starting, stopping and connecting to [Nailgun](http://martiansoftware.com/nailgun/) servers.
@@ -84,4 +84,3 @@ Fetches an array of paths in the server’s classpath. The callback is called wi
 ### NailgunServer.prototype.stop(callback)
 
 Stops the server. The callback is called when server shutdown is probably complete, or if there was an error it will be passed the error object.
-

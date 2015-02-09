@@ -1,7 +1,7 @@
 {
   "name": "node-nailgun",
-  "version": "1.0.0",
-  "description": "Start, stop and connect to Nailgun servers.",
+  "version": "1.0.1",
+  "description": "Start, stop and connect to Nailgun servers",
   "engines": {
     "node": ">=0.10"
   },
@@ -31,9 +31,9 @@
   },
   "repository": {
     "type": "git",
-    "url": "git://github.com/DesertNet/node-nailgun"
+    "url": "git://github.com/desertnet/node-nailgun"
   },
   "bugs": {
-    "url": "https://github.com/DesertNet/node-nailgun/issues"
+    "url": "https://github.com/desertnet/node-nailgun/issues"
   }
 }
