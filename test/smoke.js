@@ -28,6 +28,9 @@ var addr = "127.0.0.1"
   , port = 2335
 
 describe("Smoke Test", function () {
+    // These tests can take a while, especially on cloud CI infrastructure
+    this.timeout(6000)
+
     it("ensures a server is not already running and kills it if it is", function (done) {
         var connection = jvmpin.createConnection(port, addr)
 
