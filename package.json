@@ -19,15 +19,15 @@
   "author": "Eric McCarthy <eric@limulus.net>",
   "license": "Apache v2",
   "devDependencies": {
-    "mocha": "^1.12.1",
+    "mocha": "^2.1.0",
     "sinon": "^1.7.3"
   },
   "directories": {
     "test": "test"
   },
   "dependencies": {
-    "jvmpin": "^1.0.8",
-    "jarfile": "^1.0.0"
+    "jarfile": "^1.0.2",
+    "jvmpin": "^1.0.8"
   },
   "repository": {
     "type": "git",
