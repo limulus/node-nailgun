@@ -26,7 +26,7 @@
     "test": "test"
   },
   "dependencies": {
-    "jarfile": "^1.0.2",
+    "jarfile": "^1.0.3",
     "jvmpin": "^1.0.8"
   },
   "repository": {
